@@ -56,6 +56,19 @@ dsh plugin --profile web add ./dsh-provider-model-configurator-0.3.9.tgz
 └── tsconfig.json
 ```
 
+## 兼容性
+
+支持 DSH 两代内核的 `settings` 服务形态:
+
+| 内核 | `settings` 读取方式 |
+| --- | --- |
+| 0.1.x(web profile,如 `0.1.2-rc.1`) | `settings.get(ns)` — 命名空间注册表 |
+| 0.2.x(桌面 bundle,如 `0.2.0-rc.2`) | `settings.describe()` — 返回 `{ ns, value, revision, … }` 描述符数组 |
+
+Host 半区通过 `readSettingsSection()` 自动择一,缺失的形态会安静降级而非抛错。同时,
+`lib/contract.js` 的每个 Typert 描述符都带 `create: () => schema`,这是 0.2.x 严格
+模式所需的字段。
+
 ## License
 
 MIT

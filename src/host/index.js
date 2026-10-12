@@ -26,6 +26,27 @@ export const inject = ['typert']
 const NS = 'llm-pi-ai'
 
 /**
+ * Read one settings namespace's resolved section on either DSH core.
+ *
+ * 0.1.x exposes `settings.get(ns)` backed by a namespace registry; 0.2.x
+ * replaced that registry with `settings.describe()`, which returns one
+ * descriptor per configurable profile entry (`{ ns, value, revision, … }`).
+ * Supporting both keeps the plugin working on the web profile
+ * (0.1.2-rc.1) and the desktop bundle (0.2.0-rc.2) alike.
+ *
+ * @param st - the `settings` service, or undefined when unavailable.
+ * @param ns - profile entry id / settings namespace to read.
+ * @returns the resolved section, or undefined while it has no value.
+ */
+function readSettingsSection(st, ns) {
+  if (st === undefined) return undefined
+  if (typeof st.get === 'function') return st.get(ns)
+  if (typeof st.describe !== 'function') return undefined
+  const found = st.describe().find((row) => row !== null && typeof row === 'object' && row.ns === ns)
+  return found === undefined ? undefined : found.value
+}
+
+/**
  * The modelConfigurator Remote service. Each method answers the business
  * envelope `{ ok: true, ... }` or `{ ok: false, error }`; the typert
  * boundary wraps it in its own transport envelope.
@@ -47,7 +68,7 @@ class ModelConfiguratorRuntime extends TypertRemoteService {
     let configured = {}
     if (st !== undefined) {
       try {
-        const section = st.get(NS)
+        const section = readSettingsSection(st, NS)
         if (section && typeof section === 'object' && section.providers && typeof section.providers === 'object') configured = section.providers
       } catch { /* resolved value unavailable */ }
     }
@@ -150,7 +171,7 @@ class ModelConfiguratorRuntime extends TypertRemoteService {
     if (st === undefined) return { ok: false, error: 'settings 服务不可用' }
     let providers = {}
     try {
-      const section = st.get(NS)
+      const section = readSettingsSection(st, NS)
       if (section && typeof section === 'object' && section.providers && typeof section.providers === 'object') providers = section.providers
     } catch (e) {
       return { ok: false, error: String((e && e.message) || e) }
@@ -219,7 +240,7 @@ class ModelConfiguratorRuntime extends TypertRemoteService {
     const clears = Array.isArray(clearFields) ? clearFields.filter((k) => typeof k === 'string') : []
     let providers = {}
     try {
-      const section = st.get(NS)
+      const section = readSettingsSection(st, NS)
       if (section && typeof section === 'object' && section.providers && typeof section.providers === 'object') providers = section.providers
     } catch (e) {
       return { ok: false, error: String((e && e.message) || e) }
@@ -335,7 +356,7 @@ class ModelConfiguratorRuntime extends TypertRemoteService {
     if (!modelId) return { ok: false, error: '缺少模型 ID' }
     let providers = {}
     try {
-      const section = st.get(NS)
+      const section = readSettingsSection(st, NS)
       if (section && typeof section === 'object' && section.providers && typeof section.providers === 'object') providers = section.providers
     } catch (e) {
       return { ok: false, error: String((e && e.message) || e) }

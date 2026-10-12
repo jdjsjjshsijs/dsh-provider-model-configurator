@@ -38,7 +38,7 @@ const resultEnvelopeSchema = schema((v) => {
   return v
 })
 
-const codec = (name, sch) => ({ mode: 'strict', typeSymbol: `dsh-provider-model-configurator#${name}`, schema: sch })
+const codec = (name, sch) => ({ mode: 'strict', typeSymbol: `dsh-provider-model-configurator#${name}`, schema: sch, create: () => sch })
 
 const stringParam = (name) => ({
   name,
@@ -55,7 +55,7 @@ export const INVOCATIONS = [
     method: 'presetProviders',
     invocation: { kind: 'direct' },
     parameters: [],
-    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#PresetProvidersResult', schema: resultEnvelopeSchema },
+    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#PresetProvidersResult', schema: resultEnvelopeSchema, create: () => resultEnvelopeSchema },
   },
   {
     id: 'dsh-provider-model-configurator#modelConfigurator/presetModels',
@@ -64,7 +64,7 @@ export const INVOCATIONS = [
     method: 'presetModels',
     invocation: { kind: 'direct' },
     parameters: [stringParam('provider')],
-    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#PresetModelsResult', schema: resultEnvelopeSchema },
+    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#PresetModelsResult', schema: resultEnvelopeSchema, create: () => resultEnvelopeSchema },
   },
   {
     id: 'dsh-provider-model-configurator#modelConfigurator/presetModelInfo',
@@ -73,7 +73,7 @@ export const INVOCATIONS = [
     method: 'presetModelInfo',
     invocation: { kind: 'direct' },
     parameters: [stringParam('provider'), stringParam('model')],
-    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#PresetModelInfoResult', schema: resultEnvelopeSchema },
+    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#PresetModelInfoResult', schema: resultEnvelopeSchema, create: () => resultEnvelopeSchema },
   },
   {
     id: 'dsh-provider-model-configurator#modelConfigurator/targetProviders',
@@ -82,7 +82,7 @@ export const INVOCATIONS = [
     method: 'targetProviders',
     invocation: { kind: 'direct' },
     parameters: [],
-    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#TargetProvidersResult', schema: resultEnvelopeSchema },
+    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#TargetProvidersResult', schema: resultEnvelopeSchema, create: () => resultEnvelopeSchema },
   },
   {
     id: 'dsh-provider-model-configurator#modelConfigurator/applyModelConfig',
@@ -96,7 +96,7 @@ export const INVOCATIONS = [
       { name: 'overwrite', wire: 'overwrite', source: 'json', codec: codec('Boolean', booleanSchema) },
       { name: 'clearFields', wire: 'clearFields', source: 'json', codec: codec('StringArray', stringArraySchema) },
     ],
-    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#ApplyModelConfigResult', schema: resultEnvelopeSchema },
+    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#ApplyModelConfigResult', schema: resultEnvelopeSchema, create: () => resultEnvelopeSchema },
   },
   {
     id: 'dsh-provider-model-configurator#modelConfigurator/deleteModel',
@@ -105,7 +105,7 @@ export const INVOCATIONS = [
     method: 'deleteModel',
     invocation: { kind: 'direct' },
     parameters: [stringParam('route'), stringParam('modelId')],
-    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#DeleteModelResult', schema: resultEnvelopeSchema },
+    result: { mode: 'strict', typeSymbol: 'dsh-provider-model-configurator#DeleteModelResult', schema: resultEnvelopeSchema, create: () => resultEnvelopeSchema },
   },
 ]
 
